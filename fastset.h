@@ -16,6 +16,8 @@ void fastset_free(struct fastset_t *fastset);
 void fastset_add(struct fastset_t *fastset, size_t value);
 int fastset_contains(struct fastset_t *fastset, size_t value);
 void fastset_remove(struct fastset_t *fastset, size_t value);
+size_t fastset_size(struct fastset_t *fastset);
+size_t fastset_max(struct fastset_t *fastset);
 void fastset_clear(struct fastset_t *fastset);
 
 void fastset_foreach(struct fastset_t *fastset, void (*pt2Func) (size_t each));
