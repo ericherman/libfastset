@@ -41,12 +41,16 @@ CFLAGS += $(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
 LDFLAGS += -L. -l$(LIB_NAME)
 CC=gcc
 
+ifeq ("$(PREFIX)", "")
+PREFIX=/usr/local
+endif
+
 ifeq ("$(LIBDIR)", "")
-LIBDIR=/usr/local/lib
+LIBDIR=$(PREFIX)/lib
 endif
 
 ifeq ("$(INCDIR)", "")
-INCDIR=/usr/local/include
+INCDIR=$(PREFIX)/include
 endif
 
 LD_LIBRARY_PATH=.$(AUX_LD_LIBRARY_PATHS)
@@ -78,9 +82,11 @@ check: $(OUT)
 clean:
 	rm -f *.o *.a *.$(SHAREDEXT)  $(SO_NAME).* $(OUT)-static $(OUT)-dynamic
 
-install:
-	 @echo "Installing libraries in $(LIBDIR)"; \
+install: library
+	@echo "Installing libraries in $(LIBDIR)"; \
+	 mkdir -pv $(LIBDIR);\
 	 cp -pv $(A_NAME) $(LIBDIR)/;\
 	 cp -Rv $(SO_NAME)* $(LIBDIR)/;\
 	 echo "Installing headers in $(INCDIR)"; \
+	 mkdir -pv $(INCDIR);\
 	 cp -pv $(LIB_HDR) $(INCDIR)/;
