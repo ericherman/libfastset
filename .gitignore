@@ -1,3 +1,9 @@
+##################
+# test programs
+##################
+test-*-dynamic
+test-*-static
+
 ###################
 # backup files
 ###################
@@ -12,6 +18,8 @@ $*
 # Output files
 ################
 *.o
+*.so
+*.so.*
 *.a
 *.bin
 *.d
