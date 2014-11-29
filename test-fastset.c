@@ -70,6 +70,7 @@ int main(void)
 	failures += check_size_t(fastset_size(fs), 0);
 	failures += check_size_t(fastset_max(fs), max_value);
 
+	free(params);
 	fastset_free(fs);
 
 	if (failures) {
