@@ -51,7 +51,7 @@ endif
 
 LD_LIBRARY_PATH=.$(AUX_LD_LIBRARY_PATHS)
 
-default: $(OUT)
+default: library
 
 .c.o:
 	$(CC) -c -fPIC $(CFLAGS) $< -o $@
@@ -64,7 +64,9 @@ $(SO_NAME): $(LIB_OBJ)
 $(A_NAME): $(LIB_OBJ)
 	ar -r $(A_NAME) $(SO_OBJS)
 
-$(OUT): $(SO_NAME) $(A_NAME)
+library: $(SO_NAME) $(A_NAME)
+
+$(OUT): library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) $(SRC) -o $(OBJ)
 	$(CC) $(OBJ) $(A_NAME) $(AUX_A_FILES) -o $(OUT)-static
 	$(CC) $(OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(OUT)-dynamic
