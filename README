@@ -1,0 +1,13 @@
+An implementation of "Using Uninitialized Memory for Fun and Profit"
+http://research.swtch.com/sparse
+
+This is a set implementation for which all operations are O(1) ...
+ (except set iteration which is O(n), which is obviously the best case).
+
+License
+-------
+Unless a file specifically says otherwise, all content is Licensed under the
+terms of the GNU Lesser General Public License (LGPL), version 3 or later.
+
+See COPYING.GPL3 and COPYING.LGPL3 for details.
+
