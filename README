@@ -4,6 +4,10 @@ http://research.swtch.com/sparse
 This is a set implementation for which all operations are O(1) ...
  (except set iteration which is O(n), which is obviously the best case).
 
+This performance boost comes by trading memory for speed. Specifically,
+this is terribly inefficient in terms of space, because it allocates twice
+the amount of memory as required to hold the maxinum number of elements.
+
 License
 -------
 Unless a file specifically says otherwise, all content is Licensed under the
