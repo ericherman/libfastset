@@ -1,8 +1,5 @@
 #include "fastset.h"
-
 #include <stdlib.h>
-
-struct fastset_t;
 
 struct fastset_t {
 	size_t max_value;
@@ -22,12 +19,17 @@ struct fastset_t *fastset_create(size_t max_value)
 
 	fastset->max_value = max_value;
 	fastset->size = 0;
+
 	fastset->sparse = malloc(sizeof(size_t) * max_value);
 	if (!fastset->sparse) {
+		free(fastset);
 		return NULL;
 	}
+
 	fastset->dense = malloc(sizeof(size_t) * max_value);
 	if (!fastset->dense) {
+		free(fastset->sparse);
+		free(fastset);
 		return NULL;
 	}
 
