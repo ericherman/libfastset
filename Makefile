@@ -35,8 +35,7 @@ OUT=test-$(LIB_NAME)
 CSTD_CFLAGS=-std=c89
 #DEBUG_CFLAGS=-ggdb -O0
 DEBUG_CFLAGS=-Os
-NOISY_CFLAGS=-Wall -Wextra -pedantic
-#NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
+NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
 
 CFLAGS += $(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
 LDFLAGS += -L. -l$(LIB_NAME)
