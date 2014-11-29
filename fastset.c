@@ -41,33 +41,58 @@ void fastset_free(struct fastset_t *fastset)
 	free(fastset);
 }
 
-void fastset_add(struct fastset_t *fastset, size_t value)
+int fastset_add(struct fastset_t *fastset, size_t value)
 {
+	if (value > fastset->max_value) {
+		return 0;
+	}
+	if (fastset_contains(fastset, value)) {
+		return 1;
+	}
+	fastset->dense[fastset->size] = value;
+	fastset->sparse[value] = fastset->size;
+	fastset->size++;
+	return 1;
 }
 
 int fastset_contains(struct fastset_t *fastset, size_t value)
 {
-	return 0;
+	if (fastset->sparse[value] >= fastset->size) {
+		return 0;
+	}
+	return fastset->dense[fastset->sparse[value]] == value;
 }
 
 void fastset_remove(struct fastset_t *fastset, size_t value)
 {
+	size_t tmp;
+
+	if (!fastset_contains(fastset, value)) {
+		return;
+	}
+
+	tmp = fastset->dense[fastset->size - 1];
+	fastset->dense[fastset->sparse[value]] = tmp;
+	fastset->sparse[tmp] = fastset->sparse[value];
+	fastset->size--;
 }
 
 size_t fastset_size(struct fastset_t *fastset)
 {
-	return 0;
+	return fastset->size;
 }
 
 size_t fastset_max(struct fastset_t *fastset)
 {
-	return 0;
+	return fastset->max_value;
 }
 
 void fastset_clear(struct fastset_t *fastset)
 {
+	fastset->size = 0;
 }
 
-void fastset_foreach(struct fastset_t *fastset, void (*pt2Func) (size_t each))
+void fastset_foreach(struct fastset_t *fastset,
+		     void (*func) (size_t each, void *arg))
 {
 }
