@@ -10,11 +10,13 @@ int main(void)
 	struct fastset_t *fs;
 	size_t max_value = 100;
 
-	fs = fastset_create(100);
+	fs = fastset_create(max_value);
 	if (!fs) {
 		fprintf(stderr, "woops, could not allocate fastset_t\n");
 		return 1;
 	}
+
+	fastset_free(fs);
 
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);
