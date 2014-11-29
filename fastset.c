@@ -93,6 +93,11 @@ void fastset_clear(struct fastset_t *fastset)
 }
 
 void fastset_foreach(struct fastset_t *fastset,
-		     void (*func) (size_t each, void *arg))
+		     void (*func) (size_t each, void *arg), void *arg)
 {
+	size_t i;
+
+	for (i = 0; i < fastset->size; i++) {
+		(*func)(fastset->dense[i], arg);
+	}
 }

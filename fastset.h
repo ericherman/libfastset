@@ -21,7 +21,7 @@ size_t fastset_max(struct fastset_t *fastset);
 void fastset_clear(struct fastset_t *fastset);
 
 void fastset_foreach(struct fastset_t *fastset,
-		     void (*func) (size_t each, void *arg));
+		     void (*func) (size_t each, void *arg), void *arg);
 
 #ifdef __cplusplus
 }
