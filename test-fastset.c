@@ -14,64 +14,191 @@ void fill_array(size_t each, void *arg)
 	param->values[param->filled++] = each;
 }
 
-/* int main(int argc, char *argv[]) */
-int main(void)
+struct fastset_t *create_a_fastset(size_t max_value, char *msg)
+{
+	struct fastset_t *fs;
+
+	if (max_value == 0) {
+		max_value = 1024 * 1024;
+	};
+
+	fs = fastset_create(max_value);
+	if (!fs) {
+		fprintf(stderr, "%s could not allocate fastset_t (%lu)\n", msg,
+			(unsigned long)max_value);
+		exit(EXIT_FAILURE);
+	}
+
+	return fs;
+}
+
+int test_fastset_create()
 {
 	int failures = 0;
+	char *msg;
 	struct fastset_t *fs;
-	size_t max_value = 1024 * 1024;
+	size_t max_value = 42;
 
-	size_t expected1[3] = { 3, 7, 1 };
-	struct param_t *params = malloc(sizeof(struct param_t));
+	msg = "test_fastset_create";
+	fs = create_a_fastset(max_value, msg);
+
+	msg = "test_fastset_create fastset_size";
+	failures += check_size_t_m(fastset_size(fs), 0, msg);
+
+	msg = "test_fastset_create fastset_max";
+	failures += check_size_t_m(fastset_max(fs), max_value, msg);
+
+	fastset_free(fs);
+	return failures;
+}
+
+int test_fastset_add_size_contains()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs;
+	size_t max_value = 35;
+
+	msg = "test_fastset_add_size_contains";
+	fs = create_a_fastset(max_value, msg);
+
+	msg = "test_fastset_add_size_contains (A)";
+	failures += check_size_t_m(fastset_max(fs), max_value, msg);
+
+	/* adding */
+	msg = "test_fastset_add_size_contains (B)";
+	failures += check_int_m(fastset_add(fs, 3), 1, msg);
+	msg = "test_fastset_add_size_contains (C)";
+	failures += check_int_m(fastset_add(fs, max_value + 1), 0, msg);
+
+	msg = "test_fastset_add_size_contains (D)";
+	failures += check_int_m(fastset_add(fs, 3), 1, msg);
+	msg = "test_fastset_add_size_contains (E)";
+	failures += check_int_m(fastset_add(fs, 7), 1, msg);
+	msg = "test_fastset_add_size_contains (F)";
+	failures += check_int_m(fastset_add(fs, 1), 1, msg);
+
+	/* size */
+	msg = "test_fastset_add_size_contains (G)";
+	failures += check_size_t_m(fastset_size(fs), 3, msg);
+	msg = "test_fastset_add_size_contains (H)";
+	failures += check_size_t_m(fastset_max(fs), max_value, msg);
+
+	/* contains */
+	msg = "test_fastset_add_size_contains (I)";
+	failures += check_int_m(fastset_contains(fs, 1), 1, msg);
+	msg = "test_fastset_add_size_contains (J)";
+	failures += check_int_m(fastset_contains(fs, 2), 0, msg);
+	msg = "test_fastset_add_size_contains (K)";
+	failures += check_int_m(fastset_contains(fs, 3), 1, msg);
+	msg = "test_fastset_add_size_contains (L)";
+	failures += check_int_m(fastset_contains(fs, 4), 0, msg);
+	msg = "test_fastset_add_size_contains (M)";
+	failures += check_int_m(fastset_contains(fs, 7), 1, msg);
+	msg = "test_fastset_add_size_contains (N)";
+	failures += check_int_m(fastset_contains(fs, 8), 0, msg);
+
+	fastset_free(fs);
+	return failures;
+}
+
+int test_fastset_remove()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs;
+
+	msg = "test_fastset_remove";
+	fs = create_a_fastset(0, msg);
+
+	fastset_add(fs, 1);
+	fastset_add(fs, 3);
+	fastset_add(fs, 7);
+
+	fastset_remove(fs, 3);
+
+	msg = "test_fastset_remove fastset_size";
+	failures += check_size_t_m(fastset_size(fs), 2, msg);
+	msg = "test_fastset_remove fastset_contains (A)";
+	failures += check_int_m(fastset_contains(fs, 1), 1, msg);
+	msg = "test_fastset_remove fastset_contains (B)";
+	failures += check_int_m(fastset_contains(fs, 3), 0, msg);
+	msg = "test_fastset_remove fastset_contains (C)";
+	failures += check_int_m(fastset_contains(fs, 7), 1, msg);
+
+	fastset_free(fs);
+	return failures;
+}
+
+int test_fastset_clear()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs;
+
+	msg = "test_fastset_clear";
+	fs = create_a_fastset(0, msg);
+
+	fastset_add(fs, 5);
+	fastset_add(fs, 9);
+	fastset_add(fs, 4211);
+	fastset_add(fs, 2);
+
+	msg = "test_fastset_clear fastset_size (A)";
+	failures += check_size_t_m(fastset_size(fs), 4, msg);
+
+	fastset_clear(fs);
+
+	msg = "test_fastset_clear fastset_size (B)";
+	failures += check_size_t_m(fastset_size(fs), 0, msg);
+
+	fastset_free(fs);
+	return failures;
+}
+
+int test_fastset_foreach()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs;
+	size_t i;
+	struct param_t *params;
+	size_t expected[3] = { 3, 7, 1 };
+
+	params = malloc(sizeof(struct param_t));
 	if (!params) {
 		fprintf(stderr, "woops, could not allocate param_t\n");
 		return 1;
 	}
 
-	fs = fastset_create(max_value);
-	if (!fs) {
-		fprintf(stderr, "woops, could not allocate fastset_t\n");
-		return 1;
+	msg = "test_fastset_foreach";
+	fs = create_a_fastset(0, msg);
+
+	for (i = 0; i < 3; i++) {
+		fastset_add(fs, expected[i]);
 	}
-
-	failures += check_size_t(fastset_size(fs), 0);
-	failures += check_size_t(fastset_max(fs), max_value);
-
-	failures += check_int(fastset_add(fs, 3), 1);
-	failures += check_int(fastset_add(fs, max_value + 1), 0);
-	fastset_add(fs, 7);
-	fastset_add(fs, 1);
-	fastset_add(fs, 3);
-
-	failures += check_size_t(fastset_size(fs), 3);
-	failures += check_size_t(fastset_max(fs), max_value);
-
-	failures += check_int(fastset_contains(fs, 1), 1);
-	failures += check_int(fastset_contains(fs, 2), 0);
-	failures += check_int(fastset_contains(fs, 3), 1);
-	failures += check_int(fastset_contains(fs, 4), 0);
-	failures += check_int(fastset_contains(fs, 7), 1);
-	failures += check_int(fastset_contains(fs, 8), 0);
 
 	fastset_foreach(fs, fill_array, (void *)params);
 	failures +=
-	    check_byte_array((unsigned char *)expected1, sizeof(size_t) * 3,
+	    check_byte_array((unsigned char *)expected, sizeof(size_t) * 3,
 			     (unsigned char *)params->values,
 			     sizeof(size_t) * params->filled);
 
-	fastset_remove(fs, 3);
-
-	failures += check_size_t(fastset_size(fs), 2);
-	failures += check_int(fastset_contains(fs, 1), 1);
-	failures += check_int(fastset_contains(fs, 3), 0);
-	failures += check_int(fastset_contains(fs, 7), 1);
-
-	fastset_clear(fs);
-	failures += check_size_t(fastset_size(fs), 0);
-	failures += check_size_t(fastset_max(fs), max_value);
-
 	free(params);
 	fastset_free(fs);
+	return failures;
+}
+
+/* int main(int argc, char *argv[]) */
+int main(void)
+{
+	int failures = 0;
+
+	failures += test_fastset_create();
+	failures += test_fastset_add_size_contains();
+	failures += test_fastset_remove();
+	failures += test_fastset_clear();
+	failures += test_fastset_foreach();
 
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);
