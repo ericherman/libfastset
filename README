@@ -8,6 +8,14 @@ This performance boost comes by trading memory for speed. Specifically,
 this is terribly inefficient in terms of space, because it allocates twice
 the amount of memory as required to hold the maxinum number of elements.
 
+Russ Cox, in "Using Uninitialized Memory for Fun and Profit" writes:
+  The sparse set is as fast or faster than bit vectors for every operation.
+  The only problem is the space cost: two words replace each bit. Still,
+  there are times when the speed differences are enough to balance the
+  added memory cost. Briggs and Torczon point out that liveness sets used
+  during register allocation inside a compiler are usually small and are
+  cleared very frequently, making sparse sets the representation of choice.
+
 License
 -------
 Unless a file specifically says otherwise, all content is Licensed under the
