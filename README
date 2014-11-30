@@ -1,8 +1,10 @@
 An implementation of "Using Uninitialized Memory for Fun and Profit"
 http://research.swtch.com/sparse
 
-This is a set implementation for which all operations are O(1) ...
- (except set iteration which is O(n), which is obviously the best case).
+This is a set implementation for which add(), contains(), remove(), size(),
+and clear() operations are all O(1).
+
+Set iteration, intersect, and cloning are O(n).
 
 This performance boost comes by trading memory for speed. Specifically,
 this is terribly inefficient in terms of space, because it allocates twice
