@@ -70,6 +70,9 @@ int fastset_add(struct fastset_t *fastset, size_t value)
 
 int fastset_contains(struct fastset_t *fastset, size_t value)
 {
+	if (value > fastset->max_value) {
+		return 0;
+	}
 	if (fastset->sparse[value] >= fastset->size) {
 		return 0;
 	}

@@ -57,9 +57,9 @@ int test_fastset_create()
 int test_fastset_add_size_contains()
 {
 	int failures = 0;
-	char *msg;
+	char *msg, buf[80];
 	struct fastset_t *fs;
-	size_t max_value = 35;
+	size_t i, max_value = 35;
 
 	msg = "test_fastset_add_size_contains";
 	fs = create_a_fastset(max_value, msg);
@@ -99,6 +99,11 @@ int test_fastset_add_size_contains()
 	failures += check_int_m(fastset_contains(fs, 7), 1, msg);
 	msg = "test_fastset_add_size_contains (N)";
 	failures += check_int_m(fastset_contains(fs, 8), 0, msg);
+
+	for (i = max_value + 1; i < max_value + 100000; i++) {
+		sprintf(buf, "test_fastset_contains (%lu)", (unsigned long)i);
+		failures += check_int_m(fastset_contains(fs, i), 0, msg);
+	}
 
 	fastset_free(fs);
 	return failures;
@@ -182,6 +187,7 @@ int test_fastset_foreach()
 	}
 
 	fastset_foreach(fs, fill_array, (void *)params);
+
 	failures +=
 	    check_byte_array((unsigned char *)expected, sizeof(size_t) * 3,
 			     (unsigned char *)params->values,
@@ -305,7 +311,6 @@ int test_fastset_union()
 	fastset_add(fs2, 7);
 
 	result = fastset_union(fs1, fs2);
-
 	if (!result) {
 		fprintf(stderr, "whoah, couldn't union");
 		exit(EXIT_FAILURE);
@@ -355,6 +360,7 @@ int test_fastset_minus()
 		fprintf(stderr, "whoah, couldn't minus");
 		exit(EXIT_FAILURE);
 	}
+
 	msg = "test_fastset_minus size";
 	failures += check_size_t_m(fastset_size(result), 4, msg);
 
@@ -480,9 +486,6 @@ int test_fastset_disjoint()
 	return failures;
 }
 
-/* return 1 if all values of fs2 are present in fs1 and sets are not disjoint,
-+ * otherwise returns 0 */
-/* return 1 if all values of fs1 are present in fs2 and sets are not equal, */
 int test_fastset_subset_superset()
 {
 	int failures = 0;
@@ -502,7 +505,6 @@ int test_fastset_subset_superset()
 	msg = "test_fastset_superset strict [],[]";
 	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
 
-
 	fastset_add(fs1, 1);
 	msg = "test_fastset_subset [1],[]";
 	failures += check_int_m(fastset_subset(fs1, fs2, 0), 1, msg);
@@ -520,8 +522,6 @@ int test_fastset_subset_superset()
 	failures += check_int_m(fastset_subset(fs2, fs1, 1), 0, msg);
 	msg = "test_fastset_superset strict [],[1]";
 	failures += check_int_m(fastset_superset(fs2, fs1, 1), 1, msg);
-
-
 
 	fastset_add(fs2, 1);
 	msg = "test_fastset_subset [1],[1]";
@@ -554,7 +554,6 @@ int test_fastset_subset_superset()
 	fastset_clear(fs1);
 	fastset_add(fs1, 3);
 	fastset_add(fs1, 4);
-
 	msg = "test_fastset_subset [3,4],[1,2]";
 	failures += check_int_m(fastset_subset(fs1, fs2, 0), 0, msg);
 	msg = "test_fastset_superset [3,4],[1,2]";
