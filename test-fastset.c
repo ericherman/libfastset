@@ -307,7 +307,7 @@ int test_fastset_union()
 	result = fastset_union(fs1, fs2);
 
 	if (!result) {
-		fprintf(stderr, "whoah, couldn't intersect");
+		fprintf(stderr, "whoah, couldn't union");
 		exit(EXIT_FAILURE);
 	}
 	msg = "test_fastset_union size";
@@ -324,6 +324,251 @@ int test_fastset_union()
 	return failures;
 }
 
+int test_fastset_minus()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs1, *fs2, *result;
+	size_t i;
+	char buf[80];
+	size_t expected[4] = { 0, 1, 4, 6 };
+
+	msg = "test_fastset_minus";
+	fs1 = create_a_fastset(10, msg);
+	fs2 = create_a_fastset(10, msg);
+
+	fastset_add(fs1, 0);
+	fastset_add(fs1, 1);
+	fastset_add(fs1, 2);
+	fastset_add(fs1, 3);
+	fastset_add(fs1, 4);
+	fastset_add(fs1, 5);
+	fastset_add(fs1, 6);
+
+	fastset_add(fs2, 2);
+	fastset_add(fs2, 3);
+	fastset_add(fs2, 5);
+	fastset_add(fs2, 7);
+
+	result = fastset_minus(fs1, fs2);
+	if (!result) {
+		fprintf(stderr, "whoah, couldn't minus");
+		exit(EXIT_FAILURE);
+	}
+	msg = "test_fastset_minus size";
+	failures += check_size_t_m(fastset_size(result), 4, msg);
+
+	for (i = 0; i < 4; i++) {
+		sprintf(buf, "test_fastset_minus (%lu)", (unsigned long)i);
+		failures +=
+		    check_int_m(fastset_contains(result, expected[i]), 1, msg);
+	}
+
+	fastset_free(result);
+	fastset_free(fs2);
+	fastset_free(fs1);
+	return failures;
+}
+
+int test_fastset_unique()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs1, *fs2, *result;
+	size_t i;
+	char buf[80];
+	size_t expected[5] = { 0, 1, 4, 6, 7 };
+
+	msg = "test_fastset_minus";
+	fs1 = create_a_fastset(10, msg);
+	fs2 = create_a_fastset(10, msg);
+
+	fastset_add(fs1, 0);
+	fastset_add(fs1, 1);
+	fastset_add(fs1, 2);
+	fastset_add(fs1, 3);
+	fastset_add(fs1, 4);
+	fastset_add(fs1, 5);
+	fastset_add(fs1, 6);
+
+	fastset_add(fs2, 2);
+	fastset_add(fs2, 3);
+	fastset_add(fs2, 5);
+	fastset_add(fs2, 7);
+
+	result = fastset_unique(fs1, fs2);
+	if (!result) {
+		fprintf(stderr, "whoah, couldn't unique");
+		exit(EXIT_FAILURE);
+	}
+	msg = "test_fastset_unique size";
+	failures += check_size_t_m(fastset_size(result), 5, msg);
+
+	for (i = 0; i < 5; i++) {
+		sprintf(buf, "test_fastset_unique (%lu)", (unsigned long)i);
+		failures +=
+		    check_int_m(fastset_contains(result, expected[i]), 1, msg);
+	}
+
+	fastset_free(result);
+	fastset_free(fs2);
+	fastset_free(fs1);
+	return failures;
+}
+
+int test_fastset_equal()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs1, *fs2;
+
+	msg = "test_fastset_equal";
+	fs1 = create_a_fastset(10, msg);
+	fs2 = create_a_fastset(10, msg);
+
+	failures += check_int_m(fastset_equal(fs1, fs2), 1, msg);
+
+	fastset_add(fs1, 1);
+	msg = "test_fastset_equal [1],[]";
+	failures += check_int_m(fastset_equal(fs1, fs2), 0, msg);
+
+	fastset_add(fs2, 1);
+	msg = "test_fastset_equal [1],[1]";
+	failures += check_int_m(fastset_equal(fs1, fs2), 1, msg);
+
+	fastset_add(fs2, 2);
+	msg = "test_fastset_equal [1],[1,2]";
+	failures += check_int_m(fastset_equal(fs1, fs2), 0, msg);
+
+	fastset_free(fs2);
+	fastset_free(fs1);
+	return failures;
+}
+
+int test_fastset_disjoint()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs1, *fs2;
+
+	msg = "test_fastset_disjoint";
+	fs1 = create_a_fastset(10, msg);
+	fs2 = create_a_fastset(10, msg);
+
+	failures += check_int_m(fastset_disjoint(fs1, fs2), 1, msg);
+
+	fastset_add(fs1, 1);
+	msg = "test_fastset_disjoint [1],[]";
+	failures += check_int_m(fastset_disjoint(fs1, fs2), 1, msg);
+
+	fastset_add(fs2, 1);
+	msg = "test_fastset_disjoint [1],[1]";
+	failures += check_int_m(fastset_disjoint(fs1, fs2), 0, msg);
+
+	fastset_add(fs2, 2);
+	msg = "test_fastset_disjoint [1],[1,2]";
+	failures += check_int_m(fastset_disjoint(fs1, fs2), 0, msg);
+
+	fastset_clear(fs1);
+	fastset_add(fs1, 3);
+	fastset_add(fs1, 4);
+	msg = "test_fastset_disjoint [3,4],[1,2]";
+	failures += check_int_m(fastset_disjoint(fs1, fs2), 1, msg);
+
+	fastset_free(fs2);
+	fastset_free(fs1);
+	return failures;
+}
+
+/* return 1 if all values of fs2 are present in fs1 and sets are not disjoint,
++ * otherwise returns 0 */
+/* return 1 if all values of fs1 are present in fs2 and sets are not equal, */
+int test_fastset_subset_superset()
+{
+	int failures = 0;
+	char *msg;
+	struct fastset_t *fs1, *fs2;
+
+	msg = "test_fastset_subset";
+	fs1 = create_a_fastset(10, msg);
+	fs2 = create_a_fastset(10, msg);
+
+	msg = "test_fastset_subset [],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_superset [],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_subset strict [],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
+	msg = "test_fastset_superset strict [],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
+
+
+	fastset_add(fs1, 1);
+	msg = "test_fastset_subset [1],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_superset [1],[]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 0), 0, msg);
+	msg = "test_fastset_subset strict [1],[]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 1, msg);
+	msg = "test_fastset_superset strict [1],[]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 1), 0, msg);
+	msg = "test_fastset_subset [],[1]";
+	failures += check_int_m(fastset_subset(fs2, fs1, 0), 0, msg);
+	msg = "test_fastset_superset [],[1]";
+	failures += check_int_m(fastset_superset(fs2, fs1, 0), 1, msg);
+	msg = "test_fastset_subset strict [],[1]";
+	failures += check_int_m(fastset_subset(fs2, fs1, 1), 0, msg);
+	msg = "test_fastset_superset strict [],[1]";
+	failures += check_int_m(fastset_superset(fs2, fs1, 1), 1, msg);
+
+
+
+	fastset_add(fs2, 1);
+	msg = "test_fastset_subset [1],[1]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_superset [1],[1]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_subset strict [1],[1]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
+	msg = "test_fastset_superset strict [1],[1]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 1), 0, msg);
+
+	fastset_add(fs2, 2);
+	msg = "test_fastset_subset [1],[1,2]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 0, msg);
+	msg = "test_fastset_superset [1],[1,2]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 0), 1, msg);
+	msg = "test_fastset_subset strict [1],[1,2]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
+	msg = "test_fastset_superset strict [1],[1,2]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 1), 1, msg);
+	msg = "test_fastset_subset [1,2], [1]";
+	failures += check_int_m(fastset_subset(fs2, fs1, 0), 1, msg);
+	msg = "test_fastset_superset [1,2], [1]";
+	failures += check_int_m(fastset_superset(fs2, fs1, 0), 0, msg);
+	msg = "test_fastset_subset strict [1,2], [1]";
+	failures += check_int_m(fastset_subset(fs2, fs1, 1), 1, msg);
+	msg = "test_fastset_superset strict [1,2], [1]";
+	failures += check_int_m(fastset_superset(fs2, fs1, 1), 0, msg);
+
+	fastset_clear(fs1);
+	fastset_add(fs1, 3);
+	fastset_add(fs1, 4);
+
+	msg = "test_fastset_subset [3,4],[1,2]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 0), 0, msg);
+	msg = "test_fastset_superset [3,4],[1,2]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 0), 0, msg);
+	msg = "test_fastset_subset strict [3,4],[1,2]";
+	failures += check_int_m(fastset_subset(fs1, fs2, 1), 0, msg);
+	msg = "test_fastset_superset strict [3,4],[1,2]";
+	failures += check_int_m(fastset_superset(fs1, fs2, 1), 0, msg);
+
+	fastset_free(fs2);
+	fastset_free(fs1);
+	return failures;
+}
+
 int main(int argc, char *argv[])
 {
 	int failures = 0;
@@ -332,15 +577,23 @@ int main(int argc, char *argv[])
 		global_make_valgrind_happy = atoi(argv[1]);
 	}
 
+	/* constant time functions */
 	failures += test_fastset_create();
 	failures += test_fastset_add_size_contains();
 	failures += test_fastset_remove();
 	failures += test_fastset_clear();
+
+	/* O(n) functions */
 	failures += test_fastset_foreach();
 	failures += test_fastset_clone(0);
 	failures += test_fastset_clone(1);
 	failures += test_fastset_intersect();
 	failures += test_fastset_union();
+	failures += test_fastset_minus();
+	failures += test_fastset_unique();
+	failures += test_fastset_equal();
+	failures += test_fastset_disjoint();
+	failures += test_fastset_subset_superset();
 
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);

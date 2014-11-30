@@ -71,6 +71,29 @@ struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2);
 /* allocates a new set which contains the union of the sets */
 struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2);
 
+/* allocates a new set which contains the values of s1 which are not in s2 */
+struct fastset_t *fastset_minus(struct fastset_t *s1, struct fastset_t *s2);
+
+/* allocates a new set which contains the of s1 and s2 which are not in both */
+struct fastset_t *fastset_unique(struct fastset_t *s1, struct fastset_t *s2);
+
+/* return 1 if sets contain same values, otherwise returns 0 */
+int fastset_equal(struct fastset_t *s1, struct fastset_t *s2);
+
+/* return 1 if sets contain none of the same values,
+ * otherwise returns 0 */
+int fastset_disjoint(struct fastset_t *s1, struct fastset_t *s2);
+
+/* return 1 if all values of s2 are present in s1,
+ * int strict ensures sets are not equal,
+ * otherwise returns 0 */
+int fastset_subset(struct fastset_t *s1, struct fastset_t *s2, int strict);
+
+/* return 1 if all values of s1 are present in s2,
+ * if strict ensures sets are not equal,
+ * otherwise returns 0 */
+int fastset_superset(struct fastset_t *s1, struct fastset_t *s2, int strict);
+
 /* ----- */
 /* misc  */
 /* ----- */

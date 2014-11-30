@@ -156,7 +156,7 @@ struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
 		s2 = tmp;
 	}
 
-	for (i = 0; i < s1->size; i++ ){
+	for (i = 0; i < s1->size; i++) {
 		if (fastset_contains(s2, s1->dense[i])) {
 			fastset_add(result, s1->dense[i]);
 		}
@@ -188,4 +188,111 @@ struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2)
 	}
 
 	return result;
+}
+
+struct fastset_t *fastset_minus(struct fastset_t *s1, struct fastset_t *s2)
+{
+	struct fastset_t *result;
+	size_t i;
+
+	result = fastset_create(s1->max_value, s1->calloc_flag);
+	if (!result) {
+		return NULL;
+	}
+
+	for (i = 0; i < s1->size; i++) {
+		if (!fastset_contains(s2, s1->dense[i])) {
+			fastset_add(result, s1->dense[i]);
+		}
+	}
+
+	return result;
+}
+
+struct fastset_t *fastset_unique(struct fastset_t *s1, struct fastset_t *s2)
+{
+	struct fastset_t *result;
+	size_t i, max_value;
+	int zero_mem;
+
+	max_value =
+	    (s1->max_value < s2->max_value) ? s2->max_value : s1->max_value;
+	zero_mem = (s1->calloc_flag || s2->calloc_flag);
+
+	result = fastset_create(max_value, zero_mem);
+	if (!result) {
+		return NULL;
+	}
+
+	for (i = 0; i < s1->size; i++) {
+		if (!fastset_contains(s2, s1->dense[i])) {
+			fastset_add(result, s1->dense[i]);
+		}
+	}
+	for (i = 0; i < s2->size; i++) {
+		if (!fastset_contains(s1, s2->dense[i])) {
+			fastset_add(result, s2->dense[i]);
+		}
+	}
+
+	return result;
+}
+
+int fastset_equal(struct fastset_t *s1, struct fastset_t *s2)
+{
+	size_t i;
+
+	if (s1->size != s2->size) {
+		return 0;
+	}
+
+	for (i = 0; i < s1->size; i++) {
+		if (!fastset_contains(s2, s1->dense[i])) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int fastset_disjoint(struct fastset_t *s1, struct fastset_t *s2)
+{
+	size_t i;
+	struct fastset_t *tmp;
+
+	if (!s1->size && !s2->size) {
+		return 1;
+	}
+	if (s1->size > s2->size) {
+		tmp = s2;
+		s2 = s1;
+		s1 = tmp;
+	}
+
+	for (i = 0; i < s1->size; i++) {
+		if (fastset_contains(s2, s1->dense[i])) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int fastset_subset(struct fastset_t *s1, struct fastset_t *s2, int strict)
+{
+	size_t i;
+
+	if (s1->size < s2->size) {
+		return 0;
+	}
+
+	for (i = 0; i < s2->size; i++) {
+		if (!fastset_contains(s1, s2->dense[i])) {
+			return 0;
+		}
+	}
+	return (strict && (s1->size == s2->size)) ? 0 : 1;
+}
+
+int fastset_superset(struct fastset_t *s1, struct fastset_t *s2, int strict)
+{
+	return fastset_subset(s2, s1, strict);
 }
