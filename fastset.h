@@ -61,6 +61,9 @@ void fastset_foreach(struct fastset_t *fastset,
 /* allocates a new set which is a deep-copy of this set */
 struct fastset_t *fastset_clone(struct fastset_t *fastset);
 
+/* allocates a new set which contains the intersection of the sets */
+struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2);
+
 /* ----- */
 /* misc  */
 /* ----- */

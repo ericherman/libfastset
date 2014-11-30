@@ -129,3 +129,28 @@ struct fastset_t *fastset_clone(struct fastset_t *fastset)
 	}
 	return clone;
 }
+
+struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
+{
+	struct fastset_t *result, *tmp;
+	size_t i;
+
+	result = fastset_create(s1->max_value);
+	if (!result) {
+		return NULL;
+	}
+
+	if (s1->size > s2->size) {
+		tmp = s1;
+		s1 = s2;
+		s2 = tmp;
+	}
+
+	for (i = 0; i < s1->size; i++ ){
+		if (fastset_contains(s2, s1->dense[i])) {
+			fastset_add(result, s1->dense[i]);
+		}
+	}
+
+	return result;
+}
