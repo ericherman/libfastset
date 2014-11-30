@@ -164,3 +164,28 @@ struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
 
 	return result;
 }
+
+struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2)
+{
+	struct fastset_t *result;
+	size_t i, max_value;
+	int zero_mem;
+
+	max_value =
+	    (s1->max_value < s2->max_value) ? s2->max_value : s1->max_value;
+	zero_mem = (s1->calloc_flag || s2->calloc_flag);
+
+	result = fastset_create(max_value, zero_mem);
+	if (!result) {
+		return NULL;
+	}
+
+	for (i = 0; i < s1->size; i++) {
+		fastset_add(result, s1->dense[i]);
+	}
+	for (i = 0; i < s2->size; i++) {
+		fastset_add(result, s2->dense[i]);
+	}
+
+	return result;
+}

@@ -53,7 +53,7 @@ size_t fastset_size(struct fastset_t *fastset);
 void fastset_clear(struct fastset_t *fastset);
 
 /* ---------------- */
-/* O(N) operations  */
+/* O(n) operations  */
 /* ---------------- */
 /*
  * If no fastset_remove() operations have occured, iteration will
@@ -67,6 +67,9 @@ struct fastset_t *fastset_clone(struct fastset_t *fastset);
 
 /* allocates a new set which contains the intersection of the sets */
 struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2);
+
+/* allocates a new set which contains the union of the sets */
+struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2);
 
 /* ----- */
 /* misc  */
