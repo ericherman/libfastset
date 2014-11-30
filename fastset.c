@@ -26,7 +26,7 @@ struct fastset_t *fastset_create(size_t max_value, int zero_mem)
 	if (fastset->calloc_flag) {
 		fastset->sparse = calloc(1 + max_value, (sizeof(size_t)));
 	} else {
-		fastset->sparse = malloc(1 + (sizeof(size_t) * max_value));
+		fastset->sparse = malloc((1 + max_value) * (sizeof(size_t)));
 	}
 	if (!fastset->sparse) {
 		free(fastset);
@@ -36,7 +36,7 @@ struct fastset_t *fastset_create(size_t max_value, int zero_mem)
 	if (fastset->calloc_flag) {
 		fastset->dense = calloc(1 + max_value, (sizeof(size_t)));
 	} else {
-		fastset->dense = malloc(1 + (sizeof(size_t) * max_value));
+		fastset->dense = malloc((1 + max_value) * (sizeof(size_t)));
 	}
 	if (!fastset->dense) {
 		free(fastset->sparse);
