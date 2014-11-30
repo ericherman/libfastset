@@ -10,6 +10,9 @@ extern "C" {
 
 struct fastset_t;
 
+/* ------------ */
+/* constructor  */
+/* ------------ */
 /*
  * The "max_value" argument is the largest legal value this set will be
  * prepared to handle.
@@ -18,9 +21,15 @@ struct fastset_t;
  */
 struct fastset_t *fastset_create(size_t max_value);
 
+/* ----------- */
+/* destructor  */
+/* ----------- */
 /* must be called for destruction to avoid leaking memory */
 void fastset_free(struct fastset_t *fastset);
 
+/* ------------------------ */
+/* constant time operations */
+/* ------------------------ */
 /* fastset_add will return 0 if the value is too large for the set */
 int fastset_add(struct fastset_t *fastset, size_t value);
 
@@ -39,6 +48,9 @@ size_t fastset_size(struct fastset_t *fastset);
 /* fastset_clear resets to an empty set */
 void fastset_clear(struct fastset_t *fastset);
 
+/* ---------------- */
+/* O(N) operations  */
+/* ---------------- */
 /*
  * If no fastset_remove() operations have occured, iteration will
  * be in element insertion order.
@@ -46,6 +58,10 @@ void fastset_clear(struct fastset_t *fastset);
 void fastset_foreach(struct fastset_t *fastset,
 		     void (*func) (size_t each, void *arg), void *arg);
 
+
+/* ----- */
+/* misc  */
+/* ----- */
 /* the maxium legal value this set is prepared to handle */
 size_t fastset_max(struct fastset_t *fastset);
 
