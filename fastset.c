@@ -1,5 +1,6 @@
 #include "fastset.h"
 #include <stdlib.h>
+#include <string.h>
 
 struct fastset_t {
 	size_t max_value;
@@ -20,13 +21,13 @@ struct fastset_t *fastset_create(size_t max_value)
 	fastset->max_value = max_value;
 	fastset->size = 0;
 
-	fastset->sparse = malloc(sizeof(size_t) * max_value);
+	fastset->sparse = malloc(1 + (sizeof(size_t) * max_value));
 	if (!fastset->sparse) {
 		free(fastset);
 		return NULL;
 	}
 
-	fastset->dense = malloc(sizeof(size_t) * max_value);
+	fastset->dense = malloc(1 + (sizeof(size_t) * max_value));
 	if (!fastset->dense) {
 		free(fastset->sparse);
 		free(fastset);
@@ -100,6 +101,31 @@ void fastset_foreach(struct fastset_t *fastset,
 	size_t i;
 
 	for (i = 0; i < fastset->size; i++) {
-		(*func)(fastset->dense[i], arg);
+		(*func) (fastset->dense[i], arg);
 	}
+}
+
+struct fastset_t *fastset_clone(struct fastset_t *fastset)
+{
+	struct fastset_t *clone;
+	size_t i;
+
+	clone = fastset_create(fastset->max_value);
+	if (!clone) {
+		return NULL;
+	}
+
+	/* if the set is close to full, just memcpy */
+	if ((fastset->max_value / fastset->size) < 4) {
+		clone->size = fastset->size;
+		memcpy(clone->dense, fastset->dense,
+		       sizeof(size_t) * fastset->size);
+		memcpy(clone->sparse, fastset->sparse,
+		       sizeof(size_t) * (1 + fastset->max_value));
+	} else {
+		for (i = 0; i < fastset->size; i++) {
+			fastset_add(clone, fastset->dense[i]);
+		}
+	}
+	return clone;
 }

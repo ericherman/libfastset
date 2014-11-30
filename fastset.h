@@ -58,6 +58,8 @@ void fastset_clear(struct fastset_t *fastset);
 void fastset_foreach(struct fastset_t *fastset,
 		     void (*func) (size_t each, void *arg), void *arg);
 
+/* allocates a new set which is a deep-copy of this set */
+struct fastset_t *fastset_clone(struct fastset_t *fastset);
 
 /* ----- */
 /* misc  */
