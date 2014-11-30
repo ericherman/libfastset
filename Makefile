@@ -28,9 +28,9 @@ endif
 A_NAME=lib$(LIB_NAME).a
 
 INCLUDES=-I.
-SRC=test-$(LIB_NAME).c
-OBJ=test-$(LIB_NAME).o
-OUT=test-$(LIB_NAME)
+TEST_SRC=test-$(LIB_NAME).c
+TEST_OBJ=test-$(LIB_NAME).o
+TEST=test-$(LIB_NAME)
 
 CSTD_CFLAGS=-std=c89
 #DEBUG_CFLAGS=-ggdb -O0
@@ -70,17 +70,21 @@ $(A_NAME): $(LIB_OBJ)
 
 library: $(SO_NAME) $(A_NAME)
 
-$(OUT): library
-	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) $(SRC) -o $(OBJ)
-	$(CC) $(OBJ) $(A_NAME) $(AUX_A_FILES) -o $(OUT)-static
-	$(CC) $(OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(OUT)-dynamic
+$(TEST): library
+	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
+		$(TEST_SRC) -o $(TEST_OBJ)
+	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
+	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
 
-check: $(OUT)
-	./$(OUT)-static
-	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(OUT)-dynamic
+check: $(TEST)
+	./$(TEST)-static
+	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(TEST)-dynamic
+
+valgrind: $(TEST)
+	valgrind ./$(TEST)-static 1
 
 clean:
-	rm -f *.o *.a *.$(SHAREDEXT)  $(SO_NAME).* $(OUT)-static $(OUT)-dynamic
+	rm -f *.o *.a *.$(SHAREDEXT)  $(SO_NAME).* $(TEST)-static $(TEST)-dynamic
 
 install: library
 	@echo "Installing libraries in $(LIBDIR)"; \

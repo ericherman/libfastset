@@ -3,6 +3,8 @@
 
 #include "fastset.h"
 
+int global_make_valgrind_happy = 0;
+
 struct param_t {
 	size_t values[10];
 	size_t filled;
@@ -22,7 +24,7 @@ struct fastset_t *create_a_fastset(size_t max_value, char *msg)
 		max_value = 1024 * 1024;
 	};
 
-	fs = fastset_create(max_value);
+	fs = fastset_create(max_value, global_make_valgrind_happy);
 	if (!fs) {
 		fprintf(stderr, "%s could not allocate fastset_t (%lu)\n", msg,
 			(unsigned long)max_value);
@@ -166,7 +168,7 @@ int test_fastset_foreach()
 	struct param_t *params;
 	size_t expected[3] = { 3, 7, 1 };
 
-	params = malloc(sizeof(struct param_t));
+	params = calloc(1, sizeof(struct param_t));
 	if (!params) {
 		fprintf(stderr, "woops, could not allocate param_t\n");
 		return 1;
@@ -277,10 +279,13 @@ int test_fastset_intersect()
 	return failures;
 }
 
-/* int main(int argc, char *argv[]) */
-int main(void)
+int main(int argc, char *argv[])
 {
 	int failures = 0;
+
+	if (argc > 1) {
+		global_make_valgrind_happy = atoi(argv[1]);
+	}
 
 	failures += test_fastset_create();
 	failures += test_fastset_add_size_contains();

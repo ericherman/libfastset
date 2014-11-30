@@ -17,9 +17,13 @@ struct fastset_t;
  * The "max_value" argument is the largest legal value this set will be
  * prepared to handle.
  *
+ * The "zero_mem" argument can be enabled to replace malloc calls with calloc.
+ * This is safe to leave at zero, however tools like valgrind will complain
+ * unless memory is initialized before being read.
+ *
  * Mmemory allocated is approximately: 2 * max_value * sizeof(size_t).
  */
-struct fastset_t *fastset_create(size_t max_value);
+struct fastset_t *fastset_create(size_t max_value, int zero_mem);
 
 /* ----------- */
 /* destructor  */

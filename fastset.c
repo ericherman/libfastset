@@ -7,9 +7,10 @@ struct fastset_t {
 	size_t size;
 	size_t *sparse;
 	size_t *dense;
+	char calloc_flag;
 } fastset_t;
 
-struct fastset_t *fastset_create(size_t max_value)
+struct fastset_t *fastset_create(size_t max_value, int zero_mem)
 {
 	struct fastset_t *fastset;
 
@@ -20,14 +21,23 @@ struct fastset_t *fastset_create(size_t max_value)
 
 	fastset->max_value = max_value;
 	fastset->size = 0;
+	fastset->calloc_flag = (zero_mem) ? 1 : 0;
 
-	fastset->sparse = malloc(1 + (sizeof(size_t) * max_value));
+	if (fastset->calloc_flag) {
+		fastset->sparse = calloc(1 + max_value, (sizeof(size_t)));
+	} else {
+		fastset->sparse = malloc(1 + (sizeof(size_t) * max_value));
+	}
 	if (!fastset->sparse) {
 		free(fastset);
 		return NULL;
 	}
 
-	fastset->dense = malloc(1 + (sizeof(size_t) * max_value));
+	if (fastset->calloc_flag) {
+		fastset->dense = calloc(1 + max_value, (sizeof(size_t)));
+	} else {
+		fastset->dense = malloc(1 + (sizeof(size_t) * max_value));
+	}
 	if (!fastset->dense) {
 		free(fastset->sparse);
 		free(fastset);
@@ -110,7 +120,7 @@ struct fastset_t *fastset_clone(struct fastset_t *fastset)
 	struct fastset_t *clone;
 	size_t i;
 
-	clone = fastset_create(fastset->max_value);
+	clone = fastset_create(fastset->max_value, fastset->calloc_flag);
 	if (!clone) {
 		return NULL;
 	}
@@ -135,7 +145,7 @@ struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
 	struct fastset_t *result, *tmp;
 	size_t i;
 
-	result = fastset_create(s1->max_value);
+	result = fastset_create(s1->max_value, s1->calloc_flag);
 	if (!result) {
 		return NULL;
 	}
