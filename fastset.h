@@ -1,6 +1,6 @@
 /* fastset.h */
-#ifndef _FASTSET_H_
-#define _FASTSET_H_
+#ifndef FASTSET_H
+#define FASTSET_H
 
 #include <stddef.h>
 
@@ -104,4 +104,4 @@ size_t fastset_max(struct fastset_t *fastset);
 }
 #endif
 
-#endif /* _FASTSET_H_ */
+#endif /* FASTSET_H */
