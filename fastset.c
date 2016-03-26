@@ -2,19 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct fastset_t {
+struct fastset_s {
 	size_t max_value;
 	size_t size;
 	size_t *sparse;
 	size_t *dense;
 	char calloc_flag;
-} fastset_t;
+} fastset_s;
 
-struct fastset_t *fastset_create(size_t max_value, int zero_mem)
+struct fastset_s *fastset_create(size_t max_value, int zero_mem)
 {
-	struct fastset_t *fastset;
+	struct fastset_s *fastset;
 
-	fastset = malloc(sizeof(struct fastset_t));
+	fastset = malloc(sizeof(struct fastset_s));
 	if (!fastset) {
 		return NULL;
 	}
@@ -47,14 +47,14 @@ struct fastset_t *fastset_create(size_t max_value, int zero_mem)
 	return fastset;
 }
 
-void fastset_free(struct fastset_t *fastset)
+void fastset_free(struct fastset_s *fastset)
 {
 	free(fastset->dense);
 	free(fastset->sparse);
 	free(fastset);
 }
 
-int fastset_add(struct fastset_t *fastset, size_t value)
+int fastset_add(struct fastset_s *fastset, size_t value)
 {
 	if (value > fastset->max_value) {
 		return 0;
@@ -68,7 +68,7 @@ int fastset_add(struct fastset_t *fastset, size_t value)
 	return 1;
 }
 
-int fastset_contains(struct fastset_t *fastset, size_t value)
+int fastset_contains(struct fastset_s *fastset, size_t value)
 {
 	if (value > fastset->max_value) {
 		return 0;
@@ -79,7 +79,7 @@ int fastset_contains(struct fastset_t *fastset, size_t value)
 	return fastset->dense[fastset->sparse[value]] == value;
 }
 
-void fastset_remove(struct fastset_t *fastset, size_t value)
+void fastset_remove(struct fastset_s *fastset, size_t value)
 {
 	size_t tmp;
 
@@ -93,22 +93,22 @@ void fastset_remove(struct fastset_t *fastset, size_t value)
 	fastset->size--;
 }
 
-size_t fastset_size(struct fastset_t *fastset)
+size_t fastset_size(struct fastset_s *fastset)
 {
 	return fastset->size;
 }
 
-size_t fastset_max(struct fastset_t *fastset)
+size_t fastset_max(struct fastset_s *fastset)
 {
 	return fastset->max_value;
 }
 
-void fastset_clear(struct fastset_t *fastset)
+void fastset_clear(struct fastset_s *fastset)
 {
 	fastset->size = 0;
 }
 
-void fastset_foreach(struct fastset_t *fastset,
+void fastset_foreach(struct fastset_s *fastset,
 		     void (*func) (size_t each, void *arg), void *arg)
 {
 	size_t i;
@@ -118,9 +118,9 @@ void fastset_foreach(struct fastset_t *fastset,
 	}
 }
 
-struct fastset_t *fastset_clone(struct fastset_t *fastset)
+struct fastset_s *fastset_clone(struct fastset_s *fastset)
 {
-	struct fastset_t *clone;
+	struct fastset_s *clone;
 	size_t i;
 
 	clone = fastset_create(fastset->max_value, fastset->calloc_flag);
@@ -143,9 +143,9 @@ struct fastset_t *fastset_clone(struct fastset_t *fastset)
 	return clone;
 }
 
-struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
+struct fastset_s *fastset_intersect(struct fastset_s *s1, struct fastset_s *s2)
 {
-	struct fastset_t *result, *tmp;
+	struct fastset_s *result, *tmp;
 	size_t i;
 
 	result = fastset_create(s1->max_value, s1->calloc_flag);
@@ -168,9 +168,9 @@ struct fastset_t *fastset_intersect(struct fastset_t *s1, struct fastset_t *s2)
 	return result;
 }
 
-struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2)
+struct fastset_s *fastset_union(struct fastset_s *s1, struct fastset_s *s2)
 {
-	struct fastset_t *result;
+	struct fastset_s *result;
 	size_t i, max_value;
 	int zero_mem;
 
@@ -193,9 +193,9 @@ struct fastset_t *fastset_union(struct fastset_t *s1, struct fastset_t *s2)
 	return result;
 }
 
-struct fastset_t *fastset_minus(struct fastset_t *s1, struct fastset_t *s2)
+struct fastset_s *fastset_minus(struct fastset_s *s1, struct fastset_s *s2)
 {
-	struct fastset_t *result;
+	struct fastset_s *result;
 	size_t i;
 
 	result = fastset_create(s1->max_value, s1->calloc_flag);
@@ -212,9 +212,9 @@ struct fastset_t *fastset_minus(struct fastset_t *s1, struct fastset_t *s2)
 	return result;
 }
 
-struct fastset_t *fastset_unique(struct fastset_t *s1, struct fastset_t *s2)
+struct fastset_s *fastset_unique(struct fastset_s *s1, struct fastset_s *s2)
 {
-	struct fastset_t *result;
+	struct fastset_s *result;
 	size_t i, max_value;
 	int zero_mem;
 
@@ -241,7 +241,7 @@ struct fastset_t *fastset_unique(struct fastset_t *s1, struct fastset_t *s2)
 	return result;
 }
 
-int fastset_equal(struct fastset_t *s1, struct fastset_t *s2)
+int fastset_equal(struct fastset_s *s1, struct fastset_s *s2)
 {
 	size_t i;
 
@@ -257,10 +257,10 @@ int fastset_equal(struct fastset_t *s1, struct fastset_t *s2)
 	return 1;
 }
 
-int fastset_disjoint(struct fastset_t *s1, struct fastset_t *s2)
+int fastset_disjoint(struct fastset_s *s1, struct fastset_s *s2)
 {
 	size_t i;
-	struct fastset_t *tmp;
+	struct fastset_s *tmp;
 
 	if (!s1->size && !s2->size) {
 		return 1;
@@ -279,7 +279,7 @@ int fastset_disjoint(struct fastset_t *s1, struct fastset_t *s2)
 	return 1;
 }
 
-int fastset_subset(struct fastset_t *s1, struct fastset_t *s2, int strict)
+int fastset_subset(struct fastset_s *s1, struct fastset_s *s2, int strict)
 {
 	size_t i;
 
@@ -295,7 +295,7 @@ int fastset_subset(struct fastset_t *s1, struct fastset_t *s2, int strict)
 	return (strict && (s1->size == s2->size)) ? 0 : 1;
 }
 
-int fastset_superset(struct fastset_t *s1, struct fastset_t *s2, int strict)
+int fastset_superset(struct fastset_s *s1, struct fastset_s *s2, int strict)
 {
 	return fastset_subset(s2, s1, strict);
 }

@@ -16,9 +16,9 @@ void fill_array(size_t each, void *arg)
 	param->values[param->filled++] = each;
 }
 
-struct fastset_t *create_a_fastset(size_t max_value, char *msg)
+struct fastset_s *create_a_fastset(size_t max_value, char *msg)
 {
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 
 	if (max_value == 0) {
 		max_value = 1024 * 1024;
@@ -26,7 +26,7 @@ struct fastset_t *create_a_fastset(size_t max_value, char *msg)
 
 	fs = fastset_create(max_value, global_make_valgrind_happy);
 	if (!fs) {
-		fprintf(stderr, "%s could not allocate fastset_t (%lu)\n", msg,
+		fprintf(stderr, "%s could not allocate fastset_s (%lu)\n", msg,
 			(unsigned long)max_value);
 		exit(EXIT_FAILURE);
 	}
@@ -38,7 +38,7 @@ int test_fastset_create()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 	size_t max_value = 42;
 
 	msg = "test_fastset_create";
@@ -58,7 +58,7 @@ int test_fastset_add_size_contains()
 {
 	int failures = 0;
 	char *msg, buf[80];
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 	size_t i, max_value = 35;
 
 	msg = "test_fastset_add_size_contains";
@@ -113,7 +113,7 @@ int test_fastset_remove()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 
 	msg = "test_fastset_remove";
 	fs = create_a_fastset(0, msg);
@@ -142,7 +142,7 @@ int test_fastset_clear()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 
 	msg = "test_fastset_clear";
 	fs = create_a_fastset(0, msg);
@@ -168,7 +168,7 @@ int test_fastset_foreach()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs;
+	struct fastset_s *fs;
 	size_t i;
 	struct param_t *params;
 	size_t expected[3] = { 3, 7, 1 };
@@ -202,7 +202,7 @@ int test_fastset_clone(int full)
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs, *clone;
+	struct fastset_s *fs, *clone;
 
 	msg = "test_fastset_clone";
 	fs = create_a_fastset(full ? 3 : 0, msg);
@@ -245,7 +245,7 @@ int test_fastset_intersect()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2, *result;
+	struct fastset_s *fs1, *fs2, *result;
 
 	msg = "test_fastset_intersect";
 	fs1 = create_a_fastset(10, msg);
@@ -290,7 +290,7 @@ int test_fastset_union()
 	int failures = 0;
 	char *msg;
 	char buf[80];
-	struct fastset_t *fs1, *fs2, *result;
+	struct fastset_s *fs1, *fs2, *result;
 	size_t i;
 
 	msg = "test_fastset_intersect";
@@ -333,7 +333,7 @@ int test_fastset_minus()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2, *result;
+	struct fastset_s *fs1, *fs2, *result;
 	size_t i;
 	char buf[80];
 	size_t expected[4] = { 0, 1, 4, 6 };
@@ -380,7 +380,7 @@ int test_fastset_unique()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2, *result;
+	struct fastset_s *fs1, *fs2, *result;
 	size_t i;
 	char buf[80];
 	size_t expected[5] = { 0, 1, 4, 6, 7 };
@@ -426,7 +426,7 @@ int test_fastset_equal()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2;
+	struct fastset_s *fs1, *fs2;
 
 	msg = "test_fastset_equal";
 	fs1 = create_a_fastset(10, msg);
@@ -455,7 +455,7 @@ int test_fastset_disjoint()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2;
+	struct fastset_s *fs1, *fs2;
 
 	msg = "test_fastset_disjoint";
 	fs1 = create_a_fastset(10, msg);
@@ -490,7 +490,7 @@ int test_fastset_subset_superset()
 {
 	int failures = 0;
 	char *msg;
-	struct fastset_t *fs1, *fs2;
+	struct fastset_s *fs1, *fs2;
 
 	msg = "test_fastset_subset";
 	fs1 = create_a_fastset(10, msg);
