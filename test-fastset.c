@@ -5,14 +5,14 @@
 
 int global_make_valgrind_happy = 0;
 
-struct param_t {
+struct param_s {
 	size_t values[10];
 	size_t filled;
-} param_t;
+} param_s;
 
 void fill_array(size_t each, void *arg)
 {
-	struct param_t *param = (struct param_t *)arg;
+	struct param_s *param = (struct param_s *)arg;
 	param->values[param->filled++] = each;
 }
 
@@ -170,12 +170,12 @@ int test_fastset_foreach()
 	char *msg;
 	struct fastset_s *fs;
 	size_t i;
-	struct param_t *params;
+	struct param_s *params;
 	size_t expected[3] = { 3, 7, 1 };
 
-	params = calloc(1, sizeof(struct param_t));
+	params = calloc(1, sizeof(struct param_s));
 	if (!params) {
-		fprintf(stderr, "woops, could not allocate param_t\n");
+		fprintf(stderr, "woops, could not allocate param_s\n");
 		return 1;
 	}
 
