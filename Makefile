@@ -55,6 +55,9 @@ endif
 
 LD_LIBRARY_PATH=.$(AUX_LD_LIBRARY_PATHS)
 
+# extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
+LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
+
 default: library
 
 .c.o:
@@ -82,6 +85,9 @@ check: $(TEST)
 
 valgrind: $(TEST)
 	valgrind ./$(TEST)-static 1
+
+tidy:
+	$(LINDENT) -T size_t *.c
 
 clean:
 	rm -f *.o *.a *.$(SHAREDEXT)  $(SO_NAME).* $(TEST)-static $(TEST)-dynamic
