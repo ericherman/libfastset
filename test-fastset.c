@@ -8,7 +8,7 @@ int global_make_valgrind_happy = 0;
 struct param_s {
 	size_t values[10];
 	size_t filled;
-} param_s;
+};
 
 void fill_array(size_t each, void *arg)
 {
