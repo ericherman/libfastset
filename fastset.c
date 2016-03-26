@@ -8,7 +8,7 @@ struct fastset_s {
 	size_t *sparse;
 	size_t *dense;
 	char calloc_flag;
-} fastset_s;
+};
 
 struct fastset_s *fastset_create(size_t max_value, int zero_mem)
 {
