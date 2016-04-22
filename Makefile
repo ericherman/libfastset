@@ -73,11 +73,9 @@ $(A_NAME): $(LIB_OBJ)
 
 library: $(SO_NAME) $(A_NAME)
 
-$(TEST): library
+check: library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
 		$(TEST_SRC) -o $(TEST_OBJ)
-
-check: $(TEST)
 	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
 	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
 	./$(TEST)-static
