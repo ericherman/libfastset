@@ -76,10 +76,10 @@ library: $(SO_NAME) $(A_NAME)
 $(TEST): library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
 		$(TEST_SRC) -o $(TEST_OBJ)
-	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
-	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
 
 check: $(TEST)
+	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
+	$(CC) $(TEST_OBJ) $(LDFLAGS) $(AUX_LDFLAGS) -o $(TEST)-dynamic
 	./$(TEST)-static
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(TEST)-dynamic
 
