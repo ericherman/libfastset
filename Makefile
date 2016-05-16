@@ -1,11 +1,11 @@
 LIB_NAME=fastset
 
-AUX_INCLUDES=-I ../libecheck
-AUX_A_FILES=../libecheck/libecheck.a
-AUX_LDFLAGS=-L../libecheck
 AUX_LDADD=-lecheck
-AUX_LD_LIBRARY_PATHS=:../libecheck
 
+AUX_INCLUDES=
+AUX_A_FILES=
+AUX_LDFLAGS=
+AUX_LD_LIBRARY_PATHS=
 
 UNAME := $(shell uname)
 
@@ -75,12 +75,15 @@ $(A_NAME): $(LIB_OBJ)
 
 library: $(SO_NAME) $(A_NAME)
 
-check: library
+$(TEST): library
 	$(CC) -c $(INCLUDES) $(AUX_INCLUDES) $(CFLAGS) \
 		$(TEST_SRC) -o $(TEST_OBJ)
-	$(CC) $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static
+	$(CC) -static $(TEST_OBJ) $(A_NAME) $(AUX_A_FILES) -o $(TEST)-static \
+		$(AUX_LDADD)
 	$(CC) $(LDFLAGS) $(AUX_LDFLAGS) $(TEST_OBJ) -o $(TEST)-dynamic \
 		$(LDADD) $(AUX_LDADD)
+
+check: $(TEST)
 	./$(TEST)-static
 	LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) ./$(TEST)-dynamic
 
