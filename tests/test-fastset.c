@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <echeck.h>
 
-#include "fastset.h"
+#include "../src/fastset.h"
 
 int global_make_valgrind_happy = 0;
 

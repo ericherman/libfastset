@@ -17,10 +17,10 @@ SHAREDFLAGS = -shared
 SHAREDEXT = so
 endif
 
-LIB_SRC=$(LIB_NAME).c
-LIB_HDR=$(LIB_NAME).h
+LIB_SRC=src/$(LIB_NAME).c
+LIB_HDR=src/$(LIB_NAME).h
 LIB_OBJ=$(LIB_SRC:.c=.o)
-SO_OBJS=$(LIB_NAME).o
+SO_OBJS=src/$(LIB_NAME).o
 SO_NAME=lib$(LIB_NAME).$(SHAREDEXT)
 ifneq ($(UNAME), Darwin)
     SHAREDFLAGS += -Wl,-soname,$(SO_NAME)
@@ -29,8 +29,8 @@ endif
 A_NAME=lib$(LIB_NAME).a
 
 INCLUDES=-I.
-TEST_SRC=test-$(LIB_NAME).c
-TEST_OBJ=test-$(LIB_NAME).o
+TEST_SRC=tests/test-$(LIB_NAME).c
+TEST_OBJ=tests/test-$(LIB_NAME).o
 TEST=test-$(LIB_NAME)
 
 CSTD_CFLAGS=-std=c89
@@ -91,7 +91,18 @@ valgrind: $(TEST)
 	valgrind ./$(TEST)-static 1
 
 tidy:
-	$(LINDENT) -T size_t *.c
+	patch -Np1 -i pre-tidy.diff
+	$(LINDENT) \
+		-T FILE \
+		-T size_t \
+		-T fastset_s \
+		`find src tests -name *.h -o -name *.c`
+	patch -Rp1 -i pre-tidy.diff
+
+spotless:
+	rm -rf `cat .gitignore`
+	( cd src; rm -rf `cat ../.gitignore`; cd .. )
+	( cd tests; rm -rf `cat ../.gitignore`; cd .. )
 
 clean:
 	rm -f *.o *.a *.$(SHAREDEXT)  $(SO_NAME).* $(TEST)-static $(TEST)-dynamic

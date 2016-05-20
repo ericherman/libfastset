@@ -1,0 +1,25 @@
+--- a/src/fastset.h	2016-04-22 08:58:40.639103946 +0200
++++ b/src/fastset.h	2016-05-20 21:42:45.227700980 +0200
+@@ -4,9 +4,11 @@
+ 
+ #include <stddef.h>
+ 
++/*
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
++*/
+ 
+ struct fastset_s;
+ 
+@@ -100,8 +102,10 @@
+ /* the maxium legal value this set is prepared to handle */
+ size_t fastset_max(struct fastset_s *fastset);
+ 
++/*
+ #ifdef __cplusplus
+ }
+ #endif
++*/
+ 
+ #endif /* FASTSET_H */
