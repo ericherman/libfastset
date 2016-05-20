@@ -29,3 +29,27 @@ $*
 *.srec
 *.map
 
+################
+# autotools junk
+################
+*.la
+*.lo
+*.log
+*.trs
+.libs/
+INSTALL
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+build-aux/
+config.h
+config.h.in
+config.log
+config.status
+configure
+.deps/
+.dirstamp
+libtool
+m4/
+stamp-h1
