@@ -3,6 +3,7 @@
 ##################
 test-*-dynamic
 test-*-static
+test-fastset
 
 ###################
 # backup files
@@ -17,6 +18,7 @@ $*
 ################
 # Output files
 ################
+*.tar.gz
 *.o
 *.so
 *.so.*

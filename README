@@ -18,6 +18,22 @@ Russ Cox, in "Using Uninitialized Memory for Fun and Profit" writes:
   during register allocation inside a compiler are usually small and are
   cleared very frequently, making sparse sets the representation of choice.
 
+
+Dependencies
+------------
+The tests depend upon libecheck
+* https://github.com/ericherman/libecheck
+
+
+Packaging
+---------
+autoreconf -iv &&
+ ./configure &&
+ make &&
+ make distcheck &&
+ echo "Success."
+
+
 License
 -------
 Unless a file specifically says otherwise, all content is Licensed under the
