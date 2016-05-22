@@ -597,5 +597,6 @@ int main(int argc, char *argv[])
 	if (failures) {
 		fprintf(stderr, "%d failures in total\n", failures);
 	}
-	return failures;
+
+	return failures ? 1 : 0;
 }
