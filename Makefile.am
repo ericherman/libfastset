@@ -1,9 +1,19 @@
 lib_LTLIBRARIES=libfastset.la
+
+CSTD_CFLAGS=-std=c89
+#DEBUG_CFLAGS=-ggdb -O0
+DEBUG_CFLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
+NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
+AM_CFLAGS=$(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
+
+# extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
+LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
+
 libfastset_la_SOURCES=src/fastset.c
 
 include_HEADERS=src/fastset.h
 
-TESTS=$(check_PROGRAMS)
+ACLOCAL_AMFLAGS=-I m4 --install
 
 check_PROGRAMS=\
  test_fastset_create\
@@ -19,6 +29,37 @@ check_PROGRAMS=\
  test_fastset_equal\
  test_fastset_disjoint\
  test_fastset_subset_superset
+
+TESTS=$(check_PROGRAMS)
+
+valgrind: $(check_PROGRAMS)
+	libtool --mode=execute valgrind -q ./test_fastset_create 1
+	libtool --mode=execute valgrind -q ./test_fastset_add_size_contains 1
+	libtool --mode=execute valgrind -q ./test_fastset_remove 1
+	libtool --mode=execute valgrind -q ./test_fastset_clear 1
+	libtool --mode=execute valgrind -q ./test_fastset_foreach 1
+	libtool --mode=execute valgrind -q ./test_fastset_clone 1
+	libtool --mode=execute valgrind -q ./test_fastset_intersect 1
+	libtool --mode=execute valgrind -q ./test_fastset_union 1
+	libtool --mode=execute valgrind -q ./test_fastset_minus 1
+	libtool --mode=execute valgrind -q ./test_fastset_unique 1
+	libtool --mode=execute valgrind -q ./test_fastset_equal 1
+	libtool --mode=execute valgrind -q ./test_fastset_disjoint 1
+	libtool --mode=execute valgrind -q ./test_fastset_subset_superset 1
+
+tidy:
+	patch -Np1 -i pre-tidy.diff
+	$(LINDENT) \
+		-T FILE \
+		-T size_t \
+		-T fastset_s \
+		`find src tests -name '*.h' -o -name '*.c'`
+	patch -Rp1 -i pre-tidy.diff
+
+spotless:
+	rm -rf `cat .gitignore | sed -e 's/#.*//'`
+	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
+	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
 COMMON_TEST_SOURCES=tests/test-fastset.h src/fastset.h
 COMMON_TEST_LDADD=libfastset.la -lecheck
@@ -75,43 +116,3 @@ test_fastset_subset_superset_SOURCES=tests/test_fastset_subset_superset.c\
  $(COMMON_TEST_SOURCES)
 test_fastset_subset_superset_LDADD=$(COMMON_TEST_LDADD)
 
-ACLOCAL_AMFLAGS=-I m4 --install
-
-CSTD_CFLAGS=-std=c89
-#DEBUG_CFLAGS=-ggdb -O0
-DEBUG_CFLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
-NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
-AM_CFLAGS=$(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
-
-# extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
-LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
-
-
-valgrind: $(check_PROGRAMS)
-	libtool --mode=execute valgrind -q ./test_fastset_create 1
-	libtool --mode=execute valgrind -q ./test_fastset_add_size_contains 1
-	libtool --mode=execute valgrind -q ./test_fastset_remove 1
-	libtool --mode=execute valgrind -q ./test_fastset_clear 1
-	libtool --mode=execute valgrind -q ./test_fastset_foreach 1
-	libtool --mode=execute valgrind -q ./test_fastset_clone 1
-	libtool --mode=execute valgrind -q ./test_fastset_intersect 1
-	libtool --mode=execute valgrind -q ./test_fastset_union 1
-	libtool --mode=execute valgrind -q ./test_fastset_minus 1
-	libtool --mode=execute valgrind -q ./test_fastset_unique 1
-	libtool --mode=execute valgrind -q ./test_fastset_equal 1
-	libtool --mode=execute valgrind -q ./test_fastset_disjoint 1
-	libtool --mode=execute valgrind -q ./test_fastset_subset_superset 1
-
-tidy:
-	patch -Np1 -i pre-tidy.diff
-	$(LINDENT) \
-		-T FILE \
-		-T size_t \
-		-T fastset_s \
-		`find src tests -name '*.h' -o -name '*.c'`
-	patch -Rp1 -i pre-tidy.diff
-
-spotless:
-	rm -rf `cat .gitignore | sed -e 's/#.*//'`
-	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
-	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd

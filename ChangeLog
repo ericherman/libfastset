@@ -2,7 +2,7 @@
 
 	split monolithic test-fastset.c into individual tests
 
-	* Makefile.am: support the split, improve "spotless" and "valgrind"
+	* Makefile.am: reorder; support split; improve "spotless", "valgrind"
 	* configure.ac: bump version to 1.0.1-dev
 	* tests/test-fastset.c: deleted
 	* tests/test-fastset.h: common code
