@@ -1,3 +1,27 @@
+2016-05-23  Eric Herman <eric@freesa.org>
+
+	split monolithic test-fastset.c into individual tests
+
+	* Makefile.am: support the split, improve "spotless" and "valgrind"
+	* configure.ac: bump version to 1.0.1-dev
+	* tests/test-fastset.c: deleted
+	* tests/test-fastset.h: common code
+	* tests/test_fastset_add_size_contains.c: from test-fastset
+	* tests/test_fastset_clear.c: same
+	* tests/test_fastset_clone.c: same
+	* tests/test_fastset_create.c: same
+	* tests/test_fastset_disjoint.c: same
+	* tests/test_fastset_equal.c: same
+	* tests/test_fastset_foreach.c: same
+	* tests/test_fastset_intersect.c: same
+	* tests/test_fastset_minus.c: same
+	* tests/test_fastset_remove.c: same
+	* tests/test_fastset_subset_superset.c: same
+	* tests/test_fastset_union.c: same
+	* tests/test_fastset_unique.c: same
+	* .gitignore: add the new test outputs, tidy order
+
+
 2016-05-20  Eric Herman <eric@freesa.org>
 
 	release v1.0.0

@@ -1,6 +1,19 @@
 ##################
 # test programs
 ##################
+test_fastset_create
+test_fastset_add_size_contains
+test_fastset_remove
+test_fastset_clear
+test_fastset_foreach
+test_fastset_clone
+test_fastset_intersect
+test_fastset_union
+test_fastset_minus
+test_fastset_unique
+test_fastset_equal
+test_fastset_disjoint
+test_fastset_subset_superset
 test-*-dynamic
 test-*-static
 test-fastset
@@ -18,7 +31,7 @@ $*
 ################
 # Output files
 ################
-*.tar.gz
+*.tar.*
 *.o
 *.so
 *.so.*
@@ -30,14 +43,14 @@ $*
 *.list
 *.srec
 *.map
-
-################
-# autotools junk
-################
 *.la
 *.lo
 *.log
 *.trs
+
+################
+# autotools junk
+################
 .libs/
 INSTALL
 Makefile
