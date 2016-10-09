@@ -14,6 +14,7 @@ libfastset_la_SOURCES=src/fastset.c
 include_HEADERS=src/fastset.h
 
 ACLOCAL_AMFLAGS=-I m4 --install
+EXTRA_DIST=COPYING.GPL3 pre-tidy.diff
 
 check_PROGRAMS=\
  test_fastset_create\

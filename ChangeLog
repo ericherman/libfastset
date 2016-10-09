@@ -1,3 +1,7 @@
+2016-10-09  Eric Herman <eric@freesa.org>
+
+	LGPLv3+ tidy
+
 2016-05-23  Eric Herman <eric@freesa.org>
 
 	split monolithic test-fastset.c into individual tests
