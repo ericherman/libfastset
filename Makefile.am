@@ -2,9 +2,9 @@ lib_LTLIBRARIES=libfastset.la
 
 CSTD_CFLAGS=-std=c89
 #DEBUG_CFLAGS=-ggdb -O0
-DEBUG_CFLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter
+DEBUG_CFLAGS=-ggdb -O3 -DNDEBUG -Wno-unused-parameter -fomit-frame-pointer
 NOISY_CFLAGS=-Wall -Wextra -pedantic -Werror
-AM_CFLAGS=$(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS)
+AM_CFLAGS=$(CSTD_CFLAGS) $(DEBUG_CFLAGS) $(NOISY_CFLAGS) -pipe
 
 # extracted from https://github.com/torvalds/linux/blob/master/scripts/Lindent
 LINDENT=indent -npro -kr -i8 -ts8 -sob -l80 -ss -ncs -cp1 -il0
