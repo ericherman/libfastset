@@ -62,8 +62,9 @@ spotless:
 	pushd src && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 	pushd tests && rm -rf `cat ../.gitignore | sed -e 's/#.*//'` && popd
 
-COMMON_TEST_SOURCES=tests/test-fastset.h src/fastset.h
-COMMON_TEST_LDADD=libfastset.la -lecheck
+COMMON_TEST_SOURCES=tests/echeck.h tests/echeck.c \
+	tests/test-fastset.h src/fastset.h
+COMMON_TEST_LDADD=libfastset.la
 
 test_fastset_create_SOURCES=tests/test_fastset_create.c\
  $(COMMON_TEST_SOURCES)

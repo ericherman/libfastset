@@ -3,7 +3,7 @@
 /* Copyright (C) 2016, 2018, 2019 Eric Herman <eric@freesa.org> */
 
 #include <stdio.h>
-#include <echeck.h>
+#include "echeck.h"
 
 #include "../src/fastset.h"
 
