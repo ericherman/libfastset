@@ -7,11 +7,17 @@
 #include <stddef.h>
 
 #ifdef __cplusplus
-extern "C" {
+#define Fastset_begin_C_functions extern "C" {
+#define Fastset_end_C_functions }
+#else
+#define Fastset_begin_C_functions
+#define Fastset_end_C_functions
 #endif
 
 struct fastset_s;
 
+Fastset_begin_C_functions
+#undef Fastset_begin_C_functions
 /* ------------ */
 /* constructor  */
 /* ------------ */
@@ -62,7 +68,7 @@ void fastset_clear(struct fastset_s *fastset);
  * be in element insertion order.
  */
 void fastset_foreach(struct fastset_s *fastset,
-		     void (*func) (size_t each, void *arg), void *arg);
+		     void (*func)(size_t each, void *arg), void *arg);
 
 /* allocates a new set which is a deep-copy of this set */
 struct fastset_s *fastset_clone(struct fastset_s *fastset);
@@ -102,8 +108,6 @@ int fastset_superset(struct fastset_s *s1, struct fastset_s *s2, int strict);
 /* the maxium legal value this set is prepared to handle */
 size_t fastset_max(struct fastset_s *fastset);
 
-#ifdef __cplusplus
-}
-#endif
-
+Fastset_end_C_functions
+#undef Fastset_end_C_functions
 #endif /* FASTSET_H */

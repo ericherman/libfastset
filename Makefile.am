@@ -14,7 +14,7 @@ libfastset_la_SOURCES=src/fastset.c
 include_HEADERS=src/fastset.h
 
 ACLOCAL_AMFLAGS=-I m4 --install
-EXTRA_DIST=COPYING.GPL3 pre-tidy.diff
+EXTRA_DIST=COPYING.GPL3
 
 check_PROGRAMS=\
  test_fastset_create\
@@ -49,13 +49,11 @@ valgrind: $(check_PROGRAMS)
 	libtool --mode=execute valgrind -q ./test_fastset_subset_superset 1
 
 tidy:
-	patch -Np1 -i pre-tidy.diff
 	$(LINDENT) \
 		-T FILE \
 		-T size_t \
 		-T fastset_s \
 		`find src tests -name '*.h' -o -name '*.c'`
-	patch -Rp1 -i pre-tidy.diff
 
 spotless:
 	rm -rf `cat .gitignore | sed -e 's/#.*//'`
